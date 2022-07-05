@@ -1,4 +1,6 @@
-package rsa
+package rsa.cryptography
+
+import rsa.key.PrivateKey
 
 case class DecryptionService(privateKey: PrivateKey) {
   def decrypt(message: BigInt): BigInt =

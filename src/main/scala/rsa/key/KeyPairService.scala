@@ -1,4 +1,6 @@
-package rsa
+package rsa.key
+
+import rsa.prime.PrimeService
 
 case class KeyPairService(primeService: PrimeService) {
 

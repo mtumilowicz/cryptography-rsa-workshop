@@ -1,4 +1,4 @@
-package rsa
+package rsa.conversion
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64

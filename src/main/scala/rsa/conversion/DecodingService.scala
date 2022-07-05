@@ -1,4 +1,4 @@
-package rsa
+package rsa.conversion
 
 import java.util.Base64
 import scala.annotation.tailrec

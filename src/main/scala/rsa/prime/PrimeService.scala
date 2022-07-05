@@ -1,4 +1,4 @@
-package rsa
+package rsa.prime
 
 import java.security.SecureRandom
 import scala.annotation.tailrec

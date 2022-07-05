@@ -1,5 +1,10 @@
 package rsa
 
+import rsa.conversion.{DecodingService, EncodingService}
+import rsa.cryptography.{DecryptionService, EncryptionService}
+import rsa.key.{KeyPair, KeyPairService}
+import rsa.prime.PrimeService
+
 import java.security.SecureRandom
 
 object Attacks extends App {
@@ -31,10 +36,10 @@ object Attacks extends App {
   productAttack()
 
   def smallE(): Unit = {
-    val KeyPair(privateKey, publicKey) = KeyPairService(new PrimeService(new SecureRandom)).generate()
+    val KeyPair(privateKey, publicKey) = key.KeyPairService(new PrimeService(new SecureRandom)).generate()
 
-    val encryptionService = EncryptionService(publicKey)
-    val decryptionService = DecryptionService(privateKey)
+    val encryptionService = cryptography.EncryptionService(publicKey)
+    val decryptionService = cryptography.DecryptionService(privateKey)
 
     lazy val symbols = Array[Char](
       ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
