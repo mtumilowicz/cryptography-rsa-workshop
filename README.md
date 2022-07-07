@@ -10,4 +10,4 @@
 * https://stackoverflow.com/questions/33105434/converting-a-base10-number-to-a-basen-number-using-a-custom-alphabet-of-size-n
 * https://gist.github.com/jasperdenkers/59cf5ad4acbba6b9d75d
 * https://crypto.stackexchange.com/questions/81495/rsa-is-there-a-way-to-digitally-sign-a-message-without-knowing-the-private-key
-* Euler's totient function
+* https://link.springer.com/book/10.1007/978-0-387-77993-5
