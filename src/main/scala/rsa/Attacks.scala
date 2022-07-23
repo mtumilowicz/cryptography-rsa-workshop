@@ -1,7 +1,7 @@
 package rsa
 
 import rsa.conversion.{DecodingService, EncodingService}
-import rsa.cryptography.{DecryptionService, EncryptionService}
+import rsa.cryptography.{DecryptionService, EncryptionService, SignService, VerifyService}
 import rsa.key.{KeyPair, KeyPairService}
 import rsa.prime.PrimeService
 
@@ -12,23 +12,23 @@ object Attacks extends App {
   def productAttack(): Unit = {
     val KeyPair(privateKey, publicKey) = KeyPairService(new PrimeService(new SecureRandom)).generate()
 
-    val encryptionService = EncryptionService(publicKey)
-    val decryptionService = DecryptionService(privateKey)
+    val verifyService = VerifyService(publicKey)
+    val signService = SignService(privateKey)
 
     val _387 = 387
-    val _387Signed = decryptionService.decrypt(_387)
-    val _387Verified = encryptionService.encrypt(_387Signed)
+    val _387Signed = signService.sign(_387)
+    val _387Verified = verifyService.verify(_387Signed)
     println(_387)
     println(_387Verified)
 
     val _2 = 2
-    val _2Signed = decryptionService.decrypt(_2)
-    val _2Verified = encryptionService.encrypt(_2Signed)
+    val _2Signed = signService.sign(_2)
+    val _2Verified = verifyService.verify(_2Signed)
     println(_2)
     println(_2Verified)
 
     val _774 = _2Signed * _387Signed
-    val _774Verified = encryptionService.encrypt(_774)
+    val _774Verified = verifyService.verify(_774)
     println(774)
     println(_774Verified)
   }
