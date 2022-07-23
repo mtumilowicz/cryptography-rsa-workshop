@@ -15,20 +15,21 @@ object Attacks extends App {
     val verifyService = VerifyService(publicKey)
     val signService = SignService(privateKey)
 
-    val _387 = 387
-    val _387Signed = signService.sign(_387)
-    val _387Verified = verifyService.verify(_387Signed)
-    println(_387)
+    val message_387 = 387
+    val _387Signed = signService.sign(message_387)
+    val _387Verified = verifyService.verify(message_387, _387Signed)
+    println(message_387)
     println(_387Verified)
 
-    val _2 = 2
-    val _2Signed = signService.sign(_2)
-    val _2Verified = verifyService.verify(_2Signed)
-    println(_2)
+    val message_2 = 2
+    val _2Signed = signService.sign(message_2)
+    val _2Verified = verifyService.verify(message_2, _2Signed)
+    println(message_2)
     println(_2Verified)
 
-    val _774 = _2Signed * _387Signed
-    val _774Verified = verifyService.verify(_774)
+    val message_774 = 774
+    val _774Signed = _387Signed * _2Signed
+    val _774Verified = verifyService.verify(message_774, _774Signed)
     println(774)
     println(_774Verified)
   }
