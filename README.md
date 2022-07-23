@@ -12,6 +12,11 @@
 
 
 ## rsa
+* How to test a given
+  number n for being prime? Use Fermat’s little theorem. Take A ≠ 0,±1modn. If
+  A n−1 ≠ 1modn, (4.47)
+  then n is composite; otherwise, it is prime with high probability (but not for sure!). Repeat
+  for many As to increase the likelihood of p,q being prime.
 * RSA without padding is also called Textbook RSA
 * We can fix a few issues by introducing padding.
 
@@ -124,3 +129,5 @@
   * Signing: Sign document D by computing S ≡ D^d (mod N)
   * Verification: Compute S^e mod N and verify that it is equal to D
     * This process works because Euler’s formula: S^e ≡ D^de ≡ D (mod N)
+
+
