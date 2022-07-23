@@ -1,6 +1,6 @@
 package rsa.key
 
-import rsa.prime.PrimeService
+import rsa.prime.{PrimeService, Totient}
 
 case class KeyPairService(primeService: PrimeService) {
 
@@ -8,7 +8,7 @@ case class KeyPairService(primeService: PrimeService) {
     val p = primeService.generate()
     val q = primeService.generate()
     val n = p * q
-    val totient = calcuateTotient(p, q)
+    val totient = Totient.calcuate(p, q)
 
     val e = primeService.findFirstRelativePrime(totient)
 
@@ -16,8 +16,5 @@ case class KeyPairService(primeService: PrimeService) {
 
     KeyPair(PrivateKey(n, d), PublicKey(n, e))
   }
-
-  def calcuateTotient(prime1: BigInt, prime2: BigInt): BigInt =
-    (prime1 - 1) * (prime2 - 1)
 
 }
