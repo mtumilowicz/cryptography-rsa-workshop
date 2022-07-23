@@ -47,6 +47,7 @@ class RsaTest extends AnyFeatureSpec with GivenWhenThen {
       Then("positive verification of signature")
       verification shouldBe true
     }
+
     Scenario("encrypt then decrypt") {
       Given("message")
       val message = "hello"
