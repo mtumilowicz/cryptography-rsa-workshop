@@ -28,14 +28,22 @@
 
 * prime generating
     * Miller Rabin primarity test
-    * n should be odd, therefore n = 2^k * m + 1
-    * a^(n-1) = 1 mod n
-    * a^(n-1) - 1 = 0 mod n
-    * (a^(n-1 / 2) - 1)(a^(n-1 / 2) + 1) = 0 mod n
-    * (a^(n-1 / 4) - 1)(a^(n-1 / 4) + 1)(a^(n-1 / 2) + 1) = 0 mod n
-    * (a^(n-1 / 2^k) - 1)(a^(n-1 / 2^k) + 1)(a^(n-1 / 2) + 1) = 0 mod n
-        * we can expand it until n-1 / 2^k is odd
-    * if n is prime then n divides every multiplier (Euclid's Lemma)
+        * p be an odd prime, p−1 = 2^k q, gcd(a,p)=1 => one of the following two conditions is true
+            * a^q is congruent to 1 modulo p
+            * one of a^q, a^2q , a^4q ,..., a^2^(k−1)q is congruent to −1 modulo p
+        * proof
+            * n should be odd, therefore n = 2^k * m + 1
+            * a^(n-1) = 1 mod n
+            * a^(n-1) - 1 = 0 mod n
+            * (a^(n-1 / 2) - 1)(a^(n-1 / 2) + 1) = 0 mod n
+            * (a^(n-1 / 4) - 1)(a^(n-1 / 4) + 1)(a^(n-1 / 2) + 1) = 0 mod n
+            * (a^(n-1 / 2^k) - 1)(a^(n-1 / 2^k) + 1)*...*(a^(n-1 / 2) + 1) = 0 mod n
+                * we can expand it until n-1 / 2^k is odd
+            * if n divides at least one multiplier => probably prime
+                * Euclid's lemma: if p prime <=> p|ab => p|a or p|b
+                * so we check this one by one
+                * each number in the list is the square of the previous number
+                    * n-1 / 2^k, n-1 / 2^(k-1), n-1 / 2^(k-2)
 ## rsa
 * The Rivest-Shamir-Adleman (RSA) encryption algorithm is an asymmetric encryption algorithm that is widely used
 in many products and services
