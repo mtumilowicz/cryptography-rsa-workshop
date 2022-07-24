@@ -9,9 +9,43 @@
     * https://stackoverflow.com/questions/1967578/how-bad-is-3-as-an-rsa-public-exponent
     * https://crypto.stackexchange.com/questions/3608/why-is-padding-used-for-rsa-encryption-given-that-it-is-not-a-block-cipher
     * https://crypto.stackexchange.com/questions/22531/how-does-rsa-padding-work-exactly
+    * https://www.encryptionconsulting.com/education-center/what-is-rsa/
+    * https://www.comparitech.com/blog/information-security/rsa-encryption/
+    * [Faster Primality Test - Applied Cryptography](https://www.youtube.com/watch?v=p5S0C8oKpsM)
+    * https://en.wikipedia.org/wiki/Carmichael_number
+    * [How To Tell If A Number Is Prime: The Miller-Rabin Primality Test](https://www.youtube.com/watch?v=zmhUlVck3J0)
 
+## assymetric cryptography
+* optimisations
+    * To make things more efficient, a file will generally be encrypted with a symmetric-key algorithm, and then the symmetric key will be encrypted with RSA encryption. Under this process, only an entity that has access to the RSA private key will be able to decrypt the symmetric key.
 
+      Without being able to access the symmetric key, the original file can’t be decrypted. This method can be used to keep messages and files secure, without taking too long or consuming too many computational resources.
+
+* Trap door functions
+    * RSA encryption works under the premise that the algorithm is easy to compute in one direction, but almost impossible in reverse.
+    * As an example, if you were told that 701,111 is a product of two prime numbers, would you be able to figure out what those two numbers are?
+        * Even with a calculator or a computer, most of us wouldn’t have any idea of where to start, let alone be able to figure out the answer.
+
+* prime generating
+    * Miller Rabin primarity test
+    * n should be odd, therefore n = 2^k * m + 1
+    * a^(n-1) = 1 mod n
+    * a^(n-1) - 1 = 0 mod n
+    * (a^(n-1 / 2) - 1)(a^(n-1 / 2) + 1) = 0 mod n
+    * (a^(n-1 / 4) - 1)(a^(n-1 / 4) + 1)(a^(n-1 / 2) + 1) = 0 mod n
+    * (a^(n-1 / 2^k) - 1)(a^(n-1 / 2^k) + 1)(a^(n-1 / 2) + 1) = 0 mod n
+        * we can expand it until n-1 / 2^k is odd
+    * if n is prime then n divides every multiplier (Euclid's Lemma)
 ## rsa
+* The Rivest-Shamir-Adleman (RSA) encryption algorithm is an asymmetric encryption algorithm that is widely used
+in many products and services
+
+* vulnerabilities
+    * RSA relies on the size of its key to be difficult to break. The longer an RSA key, the more secure it is.
+    * Using prime factorization, researchers managed to crack a 768 bit key RSA algorithm, but it took them 2 years, thousands of man hours, and an absurd amount of computing power, so the currently used key lengths in RSA are still safe
+    * The National Institute of Science and Technology (NIST) recommends a minimum key length of 2048 bits now, but many organizations have been using keys of length 4096 bits
+    *
+
 * How to test a given
   number n for being prime? Use Fermat’s little theorem. Take A ≠ 0,±1modn. If
   A n−1 ≠ 1modn, (4.47)
