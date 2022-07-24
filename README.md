@@ -14,6 +14,7 @@
     * [Faster Primality Test - Applied Cryptography](https://www.youtube.com/watch?v=p5S0C8oKpsM)
     * https://en.wikipedia.org/wiki/Carmichael_number
     * [How To Tell If A Number Is Prime: The Miller-Rabin Primality Test](https://www.youtube.com/watch?v=zmhUlVck3J0)
+    * https://blog.trailofbits.com/2019/07/08/fuck-rsa/
 
 ## assymetric cryptography
 * optimisations
@@ -30,6 +31,7 @@
     * Miller Rabin primarity test
         * p be an odd prime, p−1 = 2^k q, gcd(a,p)=1 => one of the following two conditions is true
             * a^q is congruent to 1 modulo p
+                * q = p-1 / 2^k
             * one of a^q, a^2q , a^4q ,..., a^2^(k−1)q is congruent to −1 modulo p
         * proof
             * n should be odd, therefore n = 2^k * m + 1
@@ -44,15 +46,33 @@
                 * so we check this one by one
                 * each number in the list is the square of the previous number
                     * n-1 / 2^k, n-1 / 2^(k-1), n-1 / 2^(k-2)
+        * if n is composite then running k iterations of the Miller–Rabin test will declare n probably
+        prime with a probability at most 4^(−k)
+            * proof
+                * Theorem 12.8
+                * https://math.mit.edu/classes/18.783/2017/LectureNotes12.pdf
 ## rsa
 * The Rivest-Shamir-Adleman (RSA) encryption algorithm is an asymmetric encryption algorithm that is widely used
 in many products and services
+* TLS 1.3 no longer supports RSA
 
 * vulnerabilities
+    * criticism: https://www.youtube.com/watch?v=lElHzac8DDI
     * RSA relies on the size of its key to be difficult to break. The longer an RSA key, the more secure it is.
     * Using prime factorization, researchers managed to crack a 768 bit key RSA algorithm, but it took them 2 years, thousands of man hours, and an absurd amount of computing power, so the currently used key lengths in RSA are still safe
     * The National Institute of Science and Technology (NIST) recommends a minimum key length of 2048 bits now, but many organizations have been using keys of length 4096 bits
+    * For example, p and q must be globally unique. If p or q ever gets reused in another RSA moduli, then both can be easily factored using the GCD algorithm
+
+* or a message like “buy me a sandwich” can be encrypted by an algorithm like RSA, which deals with numbers and not letters
+    * The reality is that all of the information that our computers process is stored in binary (1s and 0s) and we use encoding standards like ASCII or Unicode to represent them in ways that humans can understand (letters)
+    * This means that keys like “n38cb29fkbjh138g7fqijnf3kaj84f8b9f…” and messages like “buy me a sandwich” already exist as numbers, which can easily be computed in the RSA algorithm
     *
+* Padding
+    * the structure of a message can give attackers clues about its content. Sure, it was difficult to figure out the message from just its structure and it took some educated guesswork, but you need to keep in mind that computers are much better at doing this than we are. This means that they can be used to figure out far more complex codes in a much shorter time, based on clues that come from the structure and other elements.
+    * When a message is padded, randomized data is added to hide the original formatting clues that could lead to an encrypted message being broken.
+    * Padding oracles are pretty complex, but the high-level idea is that adding padding to a message requires the recipient to perform an additional check–whether the message is properly padded. When the check fails, the server throws an invalid padding error. That single piece of information is enough to slowly decrypt a chosen message.
+    * The process is tedious and involves manipulating the target ciphertext millions of times to isolate the changes which result in valid padding. But that one error message is all you need to eventually decrypt a chosen ciphertext.
+    * The fundamental issue here is that padding is necessary when using RSA, and this added complexity opens the cryptosystem up to a large attack surface. The fact that a single bit of information, whether the message was padded correctly, can have such a large impact on security makes developing secure libraries almost impossible.
 
 * How to test a given
   number n for being prime? Use Fermat’s little theorem. Take A ≠ 0,±1modn. If
