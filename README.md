@@ -17,15 +17,67 @@
     * https://blog.trailofbits.com/2019/07/08/fuck-rsa/
 
 ## assymetric cryptography
-* optimisations
-    * To make things more efficient, a file will generally be encrypted with a symmetric-key algorithm, and then the symmetric key will be encrypted with RSA encryption. Under this process, only an entity that has access to the RSA private key will be able to decrypt the symmetric key.
-
-      Without being able to access the symmetric key, the original file can’t be decrypted. This method can be used to keep messages and files secure, without taking too long or consuming too many computational resources.
-
-* Trap door functions
-    * RSA encryption works under the premise that the algorithm is easy to compute in one direction, but almost impossible in reverse.
-    * As an example, if you were told that 701,111 is a product of two prime numbers, would you be able to figure out what those two numbers are?
-        * Even with a calculator or a computer, most of us wouldn’t have any idea of where to start, let alone be able to figure out the answer.
+* If Alice and Bob want to exchange messages using a symmetric cipher, they
+  must first mutually agree on a secret key k
+  * This is fine if they have the oppor-
+    tunity to meet in secret or if they are able to communicate once over a secure
+    channel
+  * But what if they do not have this opportunity and if every commu-
+    nication between them is monitored by their adversary Eve?
+    * Is it possible for
+      Alice and Bob to exchange a secret key under these conditions?
+    * Most people’s first reaction is that it is not possible, since Eve sees every
+      piece of information that Alice and Bob exchange
+    * The
+      search for efficient (and provable) solutions to this problem, which is called
+      public key (or asymmetric) cryptography, forms one of the most interesting
+      parts of mathematical cryptography
+* We start by describing a nonmathematical way to visualize public key
+  cryptography
+  * Alice buys a safe with a narrow slot in the top and puts her
+    safe in a public location
+  *  Everyone in the world is allowed to examine the safe
+    and see that it is securely made.
+  * Bob writes his message to Alice on a piece of
+    paper and slips it through the slot in the top of the safe
+  *  Now only a person
+    with the key to the safe, which presumably means only Alice, can retrieve
+    and read Bob’s message
+  *  In this scenario, Alice’s public key is the safe, the
+    encryption algorithm is the process of putting the message in the slot, and the
+    decryption algorithm is the process of opening the safe with the key
+* mathematical formulation of an asymmetric cipher
+    *  there are spaces of keys K, plaintexts M, and ciphertexts C
+    *  element k of the key space is really a pair of keys,
+      k = (k priv ,k pub )
+    * called the private key and the public key, respectively
+    * For each public key k pub
+      there is a corresponding encryption function
+      e k pub : M −→ C
+    * for each private key k priv there is a corresponding decryption function
+      d k priv : C −→ M
+    * These have the property that if the pair (k priv ,k pub ) is in the key space K, then
+      d k priv ? e k pub (m) ? = m for all m ∈ M
+    * If an asymmetric cipher is to be secure, it must be difficult for Eve to com-
+      pute the decryption function d k priv (c), even if she knows the public key k pub
+        * Notice that under this assumption, Alice can send k pub to Bob using an inse-
+          cure communication channel, and Bob can send back the ciphertext e k pub (m),
+          without worrying that Eve will be able to decrypt the message
+    * To easily de-
+      crypt, it is necessary to know the private key k priv , and presumably Alice is
+      the only person with that information
+      * The private key is sometimes called
+        Alice’s trapdoor information, because it provides a trapdoor (i.e., a short-
+        cut) for computing the inverse function of e k pub
+      * Trap door functions
+          * RSA encryption works under the premise that the algorithm is easy to compute in one direction, but almost impossible in reverse.
+          * As an example, if you were told that 701,111 is a product of two prime numbers, would you be able to figure out what those two numbers are?
+              * Even with a calculator or a computer, most of us wouldn’t have any idea of where to start, let alone be able to figure out the answer.
+*  In practice, asymmetric ciphers tend to be considerably slower
+  than symmetric ciphers such as DES and AES. For that reason, if Bob needs
+  to send Alice a large file, he might first use an asymmetric cipher to send
+  Alice the key to a symmetric cipher, which he would then use to transmit the
+  actual file.
 
 * prime generating
     * Miller Rabin primarity test
