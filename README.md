@@ -16,69 +16,47 @@
     * [How To Tell If A Number Is Prime: The Miller-Rabin Primality Test](https://www.youtube.com/watch?v=zmhUlVck3J0)
     * https://blog.trailofbits.com/2019/07/08/fuck-rsa/
 
-## assymetric cryptography
-* If Alice and Bob want to exchange messages using a symmetric cipher, they
-  must first mutually agree on a secret key k
-  * This is fine if they have the oppor-
-    tunity to meet in secret or if they are able to communicate once over a secure
-    channel
-  * But what if they do not have this opportunity and if every commu-
-    nication between them is monitored by their adversary Eve?
-    * Is it possible for
-      Alice and Bob to exchange a secret key under these conditions?
-    * Most people’s first reaction is that it is not possible, since Eve sees every
-      piece of information that Alice and Bob exchange
-    * The
-      search for efficient (and provable) solutions to this problem, which is called
-      public key (or asymmetric) cryptography, forms one of the most interesting
-      parts of mathematical cryptography
-* We start by describing a nonmathematical way to visualize public key
-  cryptography
-  * Alice buys a safe with a narrow slot in the top and puts her
-    safe in a public location
-  *  Everyone in the world is allowed to examine the safe
-    and see that it is securely made.
-  * Bob writes his message to Alice on a piece of
-    paper and slips it through the slot in the top of the safe
-  *  Now only a person
-    with the key to the safe, which presumably means only Alice, can retrieve
-    and read Bob’s message
-  *  In this scenario, Alice’s public key is the safe, the
-    encryption algorithm is the process of putting the message in the slot, and the
-    decryption algorithm is the process of opening the safe with the key
-* mathematical formulation of an asymmetric cipher
-    *  there are spaces of keys K, plaintexts M, and ciphertexts C
-    *  element k of the key space is really a pair of keys,
-      k = (k priv ,k pub )
-    * called the private key and the public key, respectively
-    * For each public key k pub
-      there is a corresponding encryption function
-      e k pub : M −→ C
-    * for each private key k priv there is a corresponding decryption function
-      d k priv : C −→ M
-    * These have the property that if the pair (k priv ,k pub ) is in the key space K, then
-      d k priv ? e k pub (m) ? = m for all m ∈ M
-    * If an asymmetric cipher is to be secure, it must be difficult for Eve to com-
-      pute the decryption function d k priv (c), even if she knows the public key k pub
-        * Notice that under this assumption, Alice can send k pub to Bob using an inse-
-          cure communication channel, and Bob can send back the ciphertext e k pub (m),
-          without worrying that Eve will be able to decrypt the message
-    * To easily de-
-      crypt, it is necessary to know the private key k priv , and presumably Alice is
-      the only person with that information
-      * The private key is sometimes called
-        Alice’s trapdoor information, because it provides a trapdoor (i.e., a short-
-        cut) for computing the inverse function of e k pub
-      * Trap door functions
-          * RSA encryption works under the premise that the algorithm is easy to compute in one direction, but almost impossible in reverse.
-          * As an example, if you were told that 701,111 is a product of two prime numbers, would you be able to figure out what those two numbers are?
-              * Even with a calculator or a computer, most of us wouldn’t have any idea of where to start, let alone be able to figure out the answer.
-*  In practice, asymmetric ciphers tend to be considerably slower
-  than symmetric ciphers such as DES and AES. For that reason, if Bob needs
-  to send Alice a large file, he might first use an asymmetric cipher to send
-  Alice the key to a symmetric cipher, which he would then use to transmit the
-  actual file.
+## asymmetric cryptography
+* symmetric cyptography
+    * if Alice and Bob want to exchange messages, they must first mutually agree on a secret key k
+    * but what if every communication between them is monitored by their adversary?
+        * is it possible to exchange a secret key under these conditions?
+            * first reaction: is that it is not possible => every piece of information
+            that Alice and Bob exchange is public
+        * solution: public key (or asymmetric) cryptography
+* analogy
+    * Alice: buys a safe with a narrow slot in the top and puts her safe in a public location
+    * Bob: writes his message slips it through the slot
+    * Alice: only a person with the key to the safe can retrieve Bob’s message
+    * summary
+        * public key: the safe
+        * encryption algorithm: process of putting the message in the slot
+        * decryption algorithm: process of opening the safe with the key
+* mathematical formulation
+    * spaces of
+        * keys K
+            * element k e K is a pair of keys: k = (k priv, k pub)
+                * private key and the public key
+        * plaintexts M
+        * ciphertexts C
+    * for each public key there is a corresponding encryption function e_kpub: M -> C
+    * for each private key is a corresponding decryption function d_kpriv: C -> M
+    * (k priv, k pub) e K => d_kpriv o e_kpub is identity on M
+    * observation
+        * for asymmetric cipher to be secure, it must be difficult to compute the decryption
+        function, even knowing public key
+            * under this assumption, Alice can send k pub to Bob and Bob can send back the
+            ciphertext without worrying that anyone will be able to decrypt the message
+        * to easily decrypt: it is necessary to know the private key
+            * presumably only Alice has it
+        * private key is sometimes called trapdoor information
+            * it provides a trapdoor (i.e., a shortcut) for computing the inverse function of e_kpub
+* vs symmetric cryptography
+    * asymmetric ciphers tend to be considerably slower than symmetric ciphers
+        * for that reason, first use an asymmetric cipher to send the key to a symmetric cipher
+        * then use it to transmit the actual file
 
+## rsa
 * prime generating
     * Miller Rabin primarity test
         * p be an odd prime, p−1 = 2^k q, gcd(a,p)=1 => one of the following two conditions is true
@@ -103,7 +81,6 @@
             * proof
                 * Theorem 12.8
                 * https://math.mit.edu/classes/18.783/2017/LectureNotes12.pdf
-## rsa
 * The Rivest-Shamir-Adleman (RSA) encryption algorithm is an asymmetric encryption algorithm that is widely used
 in many products and services
 * TLS 1.3 no longer supports RSA
