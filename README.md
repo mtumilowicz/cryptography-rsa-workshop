@@ -17,6 +17,8 @@
     * https://blog.trailofbits.com/2019/07/08/fuck-rsa/
     * https://en.wikipedia.org/wiki/Carmichael_number
     * https://medium.com/@prudywsh/how-to-generate-big-prime-numbers-miller-rabin-49e6e6af32fb
+    * [Cipher Block Chaining](https://www.youtube.com/watch?v=L4HaxfCRRs0)
+    * [Encrypting with Block Ciphers](https://www.youtube.com/watch?v=oVCCXZfpu-w)
 
 ## preface
 * goals of this workshop
@@ -65,6 +67,9 @@
     * asymmetric ciphers tend to be considerably slower than symmetric ciphers
         * for that reason, first use an asymmetric cipher to send the key to a symmetric cipher
         * then use it to transmit the actual file
+* encryption is a permutation of b-bit strings
+    * {0, 1}^b -> {0, 1}^b
+    * each key "chooses" some permutation
 
 ## trapdoor function
 * is a function that is easy to compute in one direction, yet believed to be difficult to compute in the opposite
@@ -118,6 +123,8 @@ direction (finding its inverse) without special information, called the "trapdoo
         * this means that messages like “hello” already exist as numbers
             * can easily be computed in the RSA algorithm
 * so the setup of RSA is choosing two large prime numbers
+    * RSA relies on the size of its key to be difficult to break
+        * longer an RSA key, the more secure it is
     * prime generating problem
         * how to test a given number n for being prime?
             * maybe use Fermat’s little theorem?
@@ -181,48 +188,30 @@ direction (finding its inverse) without special information, called the "trapdoo
         * that one error message is all you need to eventually decrypt a chosen ciphertext
             * it makes developing secure libraries almost impossible
 * RSA without padding is also called Textbook RSA
-* We can fix a few issues by introducing padding.
-    * Malleability: If we have a strict format for messages, i.e. that the first or last bytes
-    contain a specific value, simply multiplying both message and ciphertext will decrease
-    the probability of creating a valid (in terms of padding) message.
-    * Semantical Security: Add randomness such that RSA is not deterministic anymore (a
-    deterministic encryption scheme yields always the same x for each instance of x=encpubkey(m)
-    for constant m and pubkey). See OAEP as an example on how to achieve this.
-* For example RSA Encryption padding is randomized, ensuring that the same message encrypted
-multiple
-times looks different each time.
-* While OAEP uses a one-way function on the plaintext, it's not quite a hash: it's called
-a mask generation function (MGF), and unlike a hash it can produce as much or as little
-output as you want (the output length is an argument to the function, and input length is
-decoupled from output length). This output should be pseudorandom.
-    * You use this in a construction called a Feistel network. To pad a message to
-    length k (so you're ultimately passing k bits through textbook RSA), you create two blocks.
-    One of them (the seed S) is a short fixed-length random string; the other (the data
-    block D) is longer, and includes the message and some more conventional padding (details
-    aren't important) to make it so the two blocks have a combined length of k.
-      Once you have these blocks, it's time to use your MGF. You first run MGF on S to
-      get a mask as long as D; you XOR that mask with D to get D′. You then run MGF on D′
-      to get a mask as long as S, and XOR that with S to get S′. Concatenate D′ and S′ to get
-      the thing you pass through RSA.
-      On the other end, you decrypt to get D′ and S′. You first recover S by computing
-      MGF(D′) and XORing with S′ (this is exactly what you did to get S′; it works just as
-      well in reverse). Once you have S, you XOR D′ with MGF(S) to get D, and once you have
-      D you take off the normal padding to get the message.
-    * Feistel networks are generally a good way to turn a one-way function into a reversible
-    function. In general, you divide the thing you're processing into two blocks, A1 and B1
-    (these have fixed length). You then compute Ai+1=Ai⊕f(Bi) and Bi+1=Bi⊕f(Ai+1), and repeat
-    till you have An,Bn as your output. To reverse it, you compute Bi−1=Bi⊕f(Ai) and
-    Ai−1=Ai⊕f(Bi−1), and repeat until you have A1,B1 again. This construction is used in
-    several block ciphers; there, f also takes a subkey as input, so without the subkey you
-    can't reverse the network. It's especially nice in hardware; a Feistel network means
-    encryption and decryption are almost identical (you basically just reverse the order
-    of the subkeys).
+* RSA Encryption padding is randomized, ensuring that the same message encrypted multiple
+times looks different each time
+
+## block ciphers
+* if block ciphers act on short blocks, how do we encrypt a long message?
+* electronic codebook mode (ECB)
+    * encrypt each block separately
+    * example
+        * codebook
+            * 00 -> 11
+            * 01 -> 00
+            * 10 -> 01
+            * 11 -> 10
+        * plaintext: 00|11|00|01|00
+        * cipher:    11|10|11|00|11
+    * cons
+        * patterns
+* summary
+
+
 
 ## vulnerabilities
 * TLS 1.3 no longer supports RSA
 * criticism: https://www.youtube.com/watch?v=lElHzac8DDI
-* RSA relies on the size of its key to be difficult to break. The longer an RSA key, the more
-secure it is.
 * Using prime factorization, researchers managed to crack a 768 bit key RSA algorithm, but it
 took them 2 years, thousands of man hours, and an absurd amount of computing power, so the
 currently used key lengths in RSA are still safe
