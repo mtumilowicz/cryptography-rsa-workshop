@@ -15,6 +15,8 @@
     * https://en.wikipedia.org/wiki/Carmichael_number
     * [How To Tell If A Number Is Prime: The Miller-Rabin Primality Test](https://www.youtube.com/watch?v=zmhUlVck3J0)
     * https://blog.trailofbits.com/2019/07/08/fuck-rsa/
+    * https://en.wikipedia.org/wiki/Carmichael_number
+    * https://medium.com/@prudywsh/how-to-generate-big-prime-numbers-miller-rabin-49e6e6af32fb
 
 ## preface
 * goals of this workshop
@@ -117,18 +119,22 @@ direction (finding its inverse) without special information, called the "trapdoo
             * can easily be computed in the RSA algorithm
 * so the setup of RSA is choosing two large prime numbers
     * prime generating problem
-        * How to test a given
-          number n for being prime? Use Fermat’s little theorem. Take A ≠ 0,±1modn. If
-          A n−1 ≠ 1modn, (4.47)
-          then n is composite; otherwise, it is prime with high probability (but not for sure!). Repeat
-          for many As to increase the likelihood of p,q being prime.
+        * how to test a given number n for being prime?
+            * maybe use Fermat’s little theorem?
+                * take A: gcd(A,n) == 1
+                    * A^(n−1) ≠ 1 mod n => then n is composite otherwise, it is prime with some probability
+                    * repeat for many As to increase the likelihood of being prime
+                * why it's wrong?
+                    * composite number that fulfills Fermat's theorem for any A: 561
+                    * family of such numbers are called Carmichael numbers
         * Miller Rabin primarity test
-            * p be an odd prime, p−1 = 2^k q, gcd(a,p)=1 => one of the following two conditions is true
+            * p be an odd prime
+            * p−1 = 2^k q, gcd(a,p)=1 => one of the following two conditions is true
                 * a^q is congruent to 1 modulo p
                     * q = p-1 / 2^k
                 * one of a^q, a^2q , a^4q ,..., a^2^(k−1)q is congruent to −1 modulo p
             * proof
-                * n should be odd, therefore n = 2^k * m + 1
+                * n = 2^k * q + 1
                 * a^(n-1) = 1 mod n
                 * a^(n-1) - 1 = 0 mod n
                 * (a^(n-1 / 2) - 1)(a^(n-1 / 2) + 1) = 0 mod n
@@ -145,26 +151,35 @@ direction (finding its inverse) without special information, called the "trapdoo
                 * proof
                     * Theorem 12.8
                     * https://math.mit.edu/classes/18.783/2017/LectureNotes12.pdf
+            * prime number density
+                * π(n) is the number of prime numbers ≤ n
+                * prime number theorem states that n / ln(n) is a good approximation of π(n)
+                * it means the probability that a randomly chosen number is prime is 1 / ln(n)
+                    * there are n positive integers ≤ n
+                    * approximately n / ln(n) primes
+                    * n / ln(n) / n = 1 / ln(n)
+                * probability to find a prime number of 1024 bits: (ln(2¹⁰²⁴)) = (1 / 710)
+                    * primes are odd (except 2), we can increase this probability by 2
+                    * to generate a 1024 bits prime number, we have to test 355 numbers randomly generated
 
 ## Padding
-* the structure of a message can give attackers clues about its content. Sure, it was difficult
-to figure out the message from just its structure and it took some educated guesswork, but you
-need to keep in mind that computers are much better at doing this than we are. This means that
-they can be used to figure out far more complex codes in a much shorter time, based on clues
-that come from the structure and other elements.
-* When a message is padded, randomized data is added to hide the original formatting clues that
-could lead to an encrypted message being broken.
-* Padding oracles are pretty complex, but the high-level idea is that adding padding to a
-message requires the recipient to perform an additional check–whether the message is properly
-padded. When the check fails, the server throws an invalid padding error. That single piece of
-information is enough to slowly decrypt a chosen message.
-* The process is tedious and involves manipulating the target ciphertext millions of times to
-isolate the changes which result in valid padding. But that one error message is all you need
-to eventually decrypt a chosen ciphertext.
-* The fundamental issue here is that padding is necessary when using RSA, and this added
-complexity opens the cryptosystem up to a large attack surface. The fact that a single bit of
-information, whether the message was padded correctly, can have such a large impact on
-security makes developing secure libraries almost impossible.
+* structure of a message can give attackers clues about its content
+* padding: adding randomized data to hide the original formatting
+    * using the word padding for RSA is by now rather incorrect
+        * historical reasons
+    * old padding schemes for RSA did simply extend the message before converting a number
+    * newer schemes actually alter the message itself as well
+        * example: OAEP
+            * entire message is randomly transformed before RSA modular exponentiation
+* padding oracles
+    * adding padding to a message requires the recipient to perform an additional check
+    whether the message is properly padded
+    * when the check fails, the server throws an invalid padding error
+        * that single piece of information is enough to slowly decrypt a chosen message
+        * process is tedious and involves manipulating the target ciphertext millions of times
+            * isolating the changes to get valid padding
+        * that one error message is all you need to eventually decrypt a chosen ciphertext
+            * it makes developing secure libraries almost impossible
 * RSA without padding is also called Textbook RSA
 * We can fix a few issues by introducing padding.
     * Malleability: If we have a strict format for messages, i.e. that the first or last bytes
@@ -202,12 +217,6 @@ decoupled from output length). This output should be pseudorandom.
     can't reverse the network. It's especially nice in hardware; a Feistel network means
     encryption and decryption are almost identical (you basically just reverse the order
     of the subkeys).
-* Using the word padding for RSA is by now rather incorrect - it's basically still called
-"padding" for historical reasons. The padding schemes for RSA did simply extend the message
-before converting a number. But newer schemes actually alter the message itself as well;
-the message cannot directly be identified in the number before exponentiation by RSA.
-OAEP is one of the schemes where the entire message is randomly transformed before RSA
-modular exponentiation.
 
 ## vulnerabilities
 * TLS 1.3 no longer supports RSA
