@@ -222,33 +222,20 @@ times looks different each time
 ## vulnerabilities
 * TLS 1.3 no longer supports RSA
 * criticism: https://www.youtube.com/watch?v=lElHzac8DDI
-* Using prime factorization, researchers managed to crack a 768 bit key RSA algorithm, but it
-took them 2 years, thousands of man hours, and an absurd amount of computing power, so the
-currently used key lengths in RSA are still safe
-* The National Institute of Science and Technology (NIST) recommends a minimum key length
-of 2048 bits now, but many organizations have been using keys of length 4096 bits
-* For example, p and q must be globally unique. If p or q ever gets reused in another
-RSA moduli, then both can be easily factored using the GCD algorithm
-* Briefly, as you've certainly observed the RSA primitive is based on modular exponentiation
-and this operation is homomorphic in the sense that if someone knows two ciphertexts
-c1=md1 and c2=md2, then he can immediately deduce : (m1.m2)d=c1.c2=c. This is the essential
-reason to break this "homomorphism", by adding inside the plaintext some hash or other techniques.
-* Sometimes the exponent is exponent 3, which is subject to an attack we’ll describe below [1].
-(The most common exponent is 65537.)
-        * This is an attack on “textbook” RSA because the weakness in this post could be
-        avoiding by real-world precautions such as adding random padding to each message so
-        that no two recipients are sent the exact same message.
-        * By the way, a similar trick works even if you only have access to one encrypted
-        message. Suppose you’re using a 2048-bit modulus N and exchanging a 256-bit key.
-        If you message m is simply the key without padding, then m³ is less than N, and so
-        you can simply take the cube root of the encrypted message in the integers.
-          * If you use random padding such as OAEP in PKCS#1, most (all?) of the known
-          weaknesses from using low exponents are no longer relevant.
-        * Key length has a much higher practical impact on security. A 768-bit RSA key has been
-        cracked recently (this was not easy ! Four years of work with big computers and bigger
-        brains). A 1024-bit key is deemed adequate for the short term, but long-term uses (e.g.
-        the encrypted data has high value and must still be confidential in year 2030) would
-        mandate something bigger, e.g. 2048 bits.
+* using prime factorization, researchers managed to crack a 768 bit key RSA algorithm
+    * recommendations: a minimum key length of 2048 bits now
+        * many organizations have been using keys of length 4096 bits
+* p and q must be globally unique
+    * if p or q ever gets reused in another RSA moduli => can be easily factored using the GCD algorithm
+* RSA primitive is based on modular exponentiation
+    * this operation is homomorphic
+    * c1=md1, c2=md2 => (m1.m2)d=c1.c2=c
+    * it is the essential to break this "homomorphism"
+        * padding
+* small exponent
+    * for example: 3 // most common exponent is 65537
+    * suppose you’re using a 2048-bit modulus N and exchanging a 256-bit key
+        * message m is simply the key without padding => m³ < N => take the cube root
 
 ## digital signature
 * solves a problem analogous to the purpose of a pen-and-ink signature on a physical document
@@ -282,17 +269,13 @@ reason to break this "homomorphism", by adding inside the plaintext some hash or
             * it should be very difficult to find D and D' whose hash(D) and hash(D') are the same
         * rather than signing document D sign the hash hash(D)
         * for verification: compute and verify the signature on hash(D)
-* The setup is the same
-  as for RSA encryption, Samantha chooses two large secret primes p and q
-  and she publishes their product N = pq and a public verification exponent e.
-  * Samantha uses her knowledge of the factorization of N to solve the congruence
-    de ≡ 1 mod(p − 1)(q − 1)
-  * Note that if Samantha were doing RSA encryption, then e would be her
-    encryption exponent and d would be her decryption exponent
-  * However, in
-    the present setup d is her signing exponent and e is her verification exponent.
-  * Signing: Sign document D by computing S ≡ D^d (mod N)
-  * Verification: Compute S^e mod N and verify that it is equal to D
-    * This process works because Euler’s formula: S^e ≡ D^de ≡ D (mod N)
-
-
+* setup
+    * the same as for RSA encryption
+    * encryption
+        * e = encryption exponent
+        * d = decryption exponent
+    * signing
+        * d = signing exponent
+            * sign document D by computing S ≡ D^d (mod N)
+        * e = verification exponent
+            * compute S^e mod N and verify that it is equal to D
