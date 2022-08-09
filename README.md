@@ -20,6 +20,10 @@
     * [Cipher Block Chaining](https://www.youtube.com/watch?v=L4HaxfCRRs0)
     * [Encrypting with Block Ciphers](https://www.youtube.com/watch?v=oVCCXZfpu-w)
 
+## disclaimer
+* only for workshop purposes
+    * for example: given implementation of RSA does not have padding
+
 ## preface
 * goals of this workshop
     * introduction to asymmetric cryptography
@@ -28,121 +32,121 @@
     * introduction to RSA
         * with common vulnerabilities
         * some basic attacks
-    * basis of padding
+    * basics of padding
     * basic knowledge of block ciphers
+* structure
+    * package cryptography
+        * decryption/encryption
+        * signing/signature verification
+    * package key - to generate RSA key pair: private and public
+    * package prime - generating primes
+    * exploits are shown in RsaExploitsTest
 * all used/needed math is described here: https://github.com/mtumilowicz/cryptography-math-basics
-
-## disclaimer
-* only for workshop purposes
-    * for example: given implementation of RSA does not have padding
 
 ## asymmetric cryptography
 * solve the problem of secure communications over an insecure network
-* symmetric cyptography
-    * if Alice and Bob want to exchange messages, they must first mutually agree on a secret key k
-    * but what if every communication between them is monitored by their adversary?
-        * is it possible to exchange a secret key under these conditions?
-            * first reaction: is that it is not possible => every piece of information
-            that Alice and Bob exchange is public
-        * solution: public key (or asymmetric) cryptography
+* symmetric cryptography context
+    * refresher
+        * to exchange messages => first mutually agree on a secret key k
+            * what if every communication is monitored?
+                * is it possible to exchange a secret key?
+                    * first reaction: not possible
+                        * reason: every piece of information that Alice and Bob exchange is public
+                    * solution: public key (or asymmetric) cryptography
+    * asymmetric ciphers - slower than symmetric ciphers
+        * first use an asymmetric cipher to send the key to a symmetric cipher
+        * then use symmetric key to transmit the actual file
 * analogy
-    * Alice: buys a safe with a narrow slot in the top and puts her safe in a public location
-    * Bob: writes his message slips it through the slot
+    * Alice: buys a safe with a narrow slot in the top and puts it in a public location
+    * Bob: writes his message and slips it through the slot
     * Alice: only a person with the key to the safe can retrieve Bob’s message
     * summary
         * public key: the safe
-        * encryption algorithm: process of putting the message in the slot
-        * decryption algorithm: process of opening the safe with the key
+        * encryption algorithm: putting the message in the slot
+        * decryption algorithm: opening the safe with the key
 * mathematical formulation
-    * spaces of
+    * three sets
         * keys K
-            * element k e K is a pair of keys: k = (k priv, k pub)
+            * k = (kpriv, kpub)
                 * private key and the public key
         * plaintexts M
         * ciphertexts C
-    * for each public key there is a corresponding encryption function e_kpub: M -> C
-    * for each private key is a corresponding decryption function d_kpriv: C -> M
+    * for each kpub => exists encryption function e_kpub: M -> C
+    * for each kpriv => exists decryption function d_kpriv: C -> M
     * (k priv, k pub) e K => (d_kpriv) o (e_kpub) is identity on M
-    * observation
-        * for asymmetric cipher to be secure, it must be difficult to compute the decryption
-        function, even knowing public key
-            * under this assumption, Alice can send k pub to Bob and Bob can send back the
-            ciphertext without worrying that anyone will be able to decrypt the message
-        * to easily decrypt: it is necessary to know the private key
-            * presumably only Alice has it
         * private key is sometimes called trapdoor information
             * it provides a trapdoor (i.e., a shortcut) for computing the inverse function of e_kpub
-* vs symmetric cryptography
-    * asymmetric ciphers tend to be considerably slower than symmetric ciphers
-        * for that reason, first use an asymmetric cipher to send the key to a symmetric cipher
-        * then use it to transmit the actual file
-* encryption is a permutation of b-bit strings
-    * {0, 1}^b -> {0, 1}^b
-    * each key "chooses" some permutation
+                * for asymmetric cipher to be secure, it must be difficult to compute inverse function
+                of e_kpub without a trapdoor information
+    * encryption is a permutation of b-bit strings
+        * {0, 1}^b -> {0, 1}^b
+        * each key "chooses" some permutation
 
 ## trapdoor function
-* is a function that is easy to compute in one direction, yet believed to be difficult to compute in the opposite
-direction (finding its inverse) without special information, called the "trapdoor
-* analogy
-    * padlock and its key
+* is a function that
+    * is easy to compute in one direction
+    * believed to be difficult to find its inverse
+        * without special information, called the "trapdoor
+* analogy: padlock and its key
     * it is trivial to change the padlock from open to closed without using the key
-        * by pushing the shackle into the lock mechanism
     * opening the padlock easily requires the key to be used
         * key is the trapdoor
 * example
-    * y = x^e mod n
-    * bad trapdoor function
-        * n = p (prime)
-        * y = x^e mod p
-        * we have to find inverse of e mod (p - 1)
-            * Fermat's little theorem => we can perform calculations mod (p − 1) in the exponent
-            * ed = 1 mod (p - 1)
-                * it is solvable (for example using extended Euclidean algorithm) if gdc(e, p-1) = 1
-        * y^d = (x^e)^d = x^ed = x mod p
-        * solution is unique
-            * suppose that we have two solution c1, c2
-            * c1 ≡ c1^de ≡ (c1^e)^d ≡ y^d ≡ (c2^e)^d ≡ c2^de ≡ c2 mod p
-        * very easy to reverse
-    * good trapdoor function (rsa)
-        * n = pq, p,q - prime
-        * y = x^e mod n
-        * we have to find inverse of e mod φ(pq)
-            * Euler's theorem => we can perform calculations mod φ(pq) in the exponent
-            * ed = 1 mod φ(pq)
-                * it is solvable (for example using extended Euclidean algorithm) if gdc(e, φ(pq)) = 1
-            * d - decryption exponent
-            * e - encryption exponent
-        * solution is unique
-            * c1 ≡ c1^de ≡ (c1^e)^d ≡ y^d ≡ (c2^e)^d ≡ c2^de ≡ c2 mod n
-        * solving y = x^e mod n is as hard as factoring n = pq
-        * however, if we know the actual factors, we can use Euler’s theorem and write x as
-            * x = y^d mod n
-            * ed = 1 mod φ(n)
+    * set some n, and define function as y = x^e mod n
+        * bad trapdoor function
+            * n = p (prime)
+            * y = x^e mod p
+            * we have to find inverse of e mod (p - 1)
+                * Fermat's little theorem => we can perform calculations mod (p − 1) in the exponent
+                * ed = 1 mod (p - 1)
+                    * it is solvable (for example using extended Euclidean algorithm) if gdc(e, p-1) = 1
+            * y^d = (x^e)^d = x^ed = x mod p
+            * solution is unique
+                * suppose that we have two solution c1, c2
+                * c1 ≡ c1^de ≡ (c1^e)^d ≡ y^d ≡ (c2^e)^d ≡ c2^de ≡ c2 mod p
+            * summary: very easy to reverse
+        * good trapdoor function (rsa)
+            * n = pq, p,q - prime
+            * y = x^e mod n
+            * we have to find inverse of e mod φ(pq)
+                * Euler's theorem => we can perform calculations mod φ(pq) in the exponent
+                * ed = 1 mod φ(pq)
+                    * it is solvable (for example using extended Euclidean algorithm) if gdc(e, φ(pq)) = 1
+                    * however, calculating φ(pq) is as hard as factoring pq
+                * d - decryption exponent
+                * e - encryption exponent
+            * solution is unique
+                * c1 ≡ c1^de ≡ (c1^e)^d ≡ y^d ≡ (c2^e)^d ≡ c2^de ≡ c2 mod n
+            * if we know the actual factors, we can use Euler’s theorem and write x as
+                * x = y^d mod n
+                * ed = 1 mod (p-1)(q-1)
 
 ## rsa
 * asymmetric encryption algorithm
-* named after its (public) inventors, Ron Rivest, Adi Shamir, and Leonard Adleman
+* named after its inventors: Ron Rivest, Adi Shamir, and Leonard Adleman
+* rsa = good trapdoor function explained above
+    * setup of RSA is choosing two large prime numbers
 * encryption is faster if e is a small and decryption is faster if d is small
     * most common e is 65537
 * we are encrypting / decrypting numbers - not letters
-    * how we encrypt a message like “hello”?
-        * all of the information that our computers process is stored in binary (1s and 0s)
-            * we use encoding standards like ASCII or Unicode to represent them in ways that humans can
-            understand (letters)
-        * this means that messages like “hello” already exist as numbers
-            * can easily be computed in the RSA algorithm
-* so the setup of RSA is choosing two large prime numbers
-    * RSA relies on the size of its key to be difficult to break
-        * longer an RSA key, the more secure it is
-    * prime generating problem
-        * how to test a given number n for being prime?
-            * maybe use Fermat’s little theorem?
-                * take A: gcd(A,n) == 1
-                    * A^(n−1) ≠ 1 mod n => then n is composite otherwise, it is prime with some probability
+    * example
+        * encrypting: "hello"
+        * observation: all of the information is already stored in binary
+            * encoding standards like ASCII or Unicode are used for humans to understand
+        * this means that "hello" already exist as numbers
+* RSA relies on the size of its key to be difficult to break
+    * longer RSA key => more secure it is
+* prime generating problem
+    * how to test a given number n for being prime?
+        * maybe use Fermat’s little theorem?
+            * take A: gcd(A,n) == 1
+                * if A^(n−1) ≠ 1 mod n => then n is composite
+                    * otherwise, it is prime with some probability
                     * repeat for many As to increase the likelihood of being prime
-                * why it's wrong?
-                    * composite number that fulfills Fermat's theorem for any A: 561
-                    * family of such numbers are called Carmichael numbers
+            * why it's wrong?
+                * take n = 561
+                    * this is composite number and fulfills Fermat's theorem for any A
+                * family of such numbers are called Carmichael numbers
         * Miller Rabin primarity test
             * p be an odd prime
             * p−1 = 2^k q, gcd(a,p)=1 => one of the following two conditions is true
