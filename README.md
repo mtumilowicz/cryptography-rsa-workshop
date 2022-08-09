@@ -22,11 +22,19 @@
 
 ## preface
 * goals of this workshop
-* all used/needed math basis is here: https://github.com/mtumilowicz/cryptography-math-basics
+    * introduction to asymmetric cryptography
+    * mathematical basis for asymmetric cryptography
+    * understanding purpose of trapdoor functions
+    * introduction to RSA
+        * with common vulnerabilities
+        * some basic attacks
+    * basis of padding
+    * basic knowledge of block ciphers
+* all used/needed math is described here: https://github.com/mtumilowicz/cryptography-math-basics
 
 ## disclaimer
 * only for workshop purposes
-    * for example: given implementation of RSA does not have padding to reveal major flaw of RSA
+    * for example: given implementation of RSA does not have padding
 
 ## asymmetric cryptography
 * solve the problem of secure communications over an insecure network
