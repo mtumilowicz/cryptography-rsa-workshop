@@ -19,6 +19,8 @@
     * https://medium.com/@prudywsh/how-to-generate-big-prime-numbers-miller-rabin-49e6e6af32fb
     * [Cipher Block Chaining](https://www.youtube.com/watch?v=L4HaxfCRRs0)
     * [Encrypting with Block Ciphers](https://www.youtube.com/watch?v=oVCCXZfpu-w)
+    * https://www.techtarget.com/searchsecurity/definition/cipher-block-chaining
+    * https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation
 
 ## disclaimer
 * only for workshop purposes
@@ -148,7 +150,7 @@
                     * this is composite number and fulfills Fermat's theorem for any A
                 * family of such numbers are called Carmichael numbers
         * Miller Rabin primarity test
-            * p be an odd prime
+            * let p be an odd prime
             * p−1 = 2^k q, gcd(a,p)=1 => one of the following two conditions is true
                 * a^q is congruent to 1 modulo p
                     * q = p-1 / 2^k
@@ -186,11 +188,11 @@
 * structure of a message can give attackers clues about its content
 * padding: adding randomized data to hide the original formatting
     * using the word padding for RSA is by now rather incorrect
-        * historical reasons
     * old padding schemes for RSA did simply extend the message before converting a number
     * newer schemes actually alter the message itself as well
         * example: OAEP
             * entire message is randomly transformed before RSA modular exponentiation
+            * the same message encrypted multiple times looks different each time
 * padding oracles
     * adding padding to a message requires the recipient to perform an additional check
     whether the message is properly padded
@@ -201,33 +203,33 @@
         * that one error message is all you need to eventually decrypt a chosen ciphertext
             * it makes developing secure libraries almost impossible
 * RSA without padding is also called Textbook RSA
-* RSA Encryption padding is randomized, ensuring that the same message encrypted multiple
-times looks different each time
-* https://robertheaton.com/2013/07/29/padding-oracle-attack/
-* https://en.wikipedia.org/wiki/Padding_oracle_attack
-* https://research.nccgroup.com/2021/02/17/cryptopals-exploiting-cbc-padding-oracles/
-* https://flast101.github.io/padding-oracle-attack-explained/
-* https://jiang-zhenghong.github.io/blogs/PaddingOracle.html
-* https://www.techtarget.com/searchsecurity/definition/cipher-block-chaining
-
-
-
+* padding oracle attack
+    * https://robertheaton.com/2013/07/29/padding-oracle-attack/
+    * https://research.nccgroup.com/2021/02/17/cryptopals-exploiting-cbc-padding-oracles/
+    * https://flast101.github.io/padding-oracle-attack-explained/
+    * https://jiang-zhenghong.github.io/blogs/PaddingOracle.html
 
 ## block ciphers
 * if block ciphers act on short blocks, how do we encrypt a long message?
-* electronic codebook mode (ECB)
-    * encrypt each block separately
-    * example
-        * codebook
-            * 00 -> 11
-            * 01 -> 00
-            * 10 -> 01
-            * 11 -> 10
-        * plaintext: 00|11|00|01|00
-        * cipher:    11|10|11|00|11
-    * cons
-        * patterns
+    * electronic codebook mode (ECB)
+        * encrypt each block separately
+        * example
+            * codebook
+                * 00 -> 11
+                * 01 -> 00
+                * 10 -> 01
+                * 11 -> 10
+            * plaintext: 00|11|00|01|00
+            * cipher:    11|10|11|00|11
+        * cons
+            * patterns
+    * cipher block chaining (CBC)
+        * each block of plaintext is XORed with the previous ciphertext block before being encrypted
+        * cipher block chaining uses what is known as an initialization vector (IV) of a certain length
+        * pros
+            * decryption of a block of ciphertext to depend on all the preceding ciphertext blocks
 * summary
+    ![alt text](img/ecb_vs_cbc.png)
 
 
 
