@@ -32,7 +32,7 @@
     * mathematical basis for asymmetric cryptography
     * understanding purpose of trapdoor functions
     * introduction to RSA
-        * with common vulnerabilities
+        * common vulnerabilities
         * some basic attacks
     * basics of padding
     * basic knowledge of block ciphers
@@ -48,13 +48,12 @@
 ## asymmetric cryptography
 * solve the problem of secure communications over an insecure network
 * symmetric cryptography context
-    * refresher
-        * to exchange messages => first mutually agree on a secret key k
-            * what if every communication is monitored?
-                * is it possible to exchange a secret key?
-                    * first reaction: not possible
-                        * reason: every piece of information that Alice and Bob exchange is public
-                    * solution: public key (or asymmetric) cryptography
+    * to exchange messages => first mutually agree on a secret key k
+        * what if every communication is monitored?
+            * is it possible to exchange a secret key?
+                * first reaction: not possible
+                    * reason: every piece of information is public
+                * solution: public key (or asymmetric) cryptography
     * asymmetric ciphers - slower than symmetric ciphers
         * first use an asymmetric cipher to send the key to a symmetric cipher
         * then use symmetric key to transmit the actual file
@@ -69,17 +68,16 @@
 * mathematical formulation
     * three sets
         * keys K
-            * k = (kpriv, kpub)
-                * private key and the public key
+            * k = (kpriv, kpub) // private key and the public key
         * plaintexts M
         * ciphertexts C
     * for each kpub => exists encryption function e_kpub: M -> C
     * for each kpriv => exists decryption function d_kpriv: C -> M
-    * (k priv, k pub) e K => (d_kpriv) o (e_kpub) is identity on M
+    * (kpriv, kpub) e K => (d_kpriv) o (e_kpub) is identity on M
         * private key is sometimes called trapdoor information
-            * it provides a trapdoor (i.e., a shortcut) for computing the inverse function of e_kpub
-                * for asymmetric cipher to be secure, it must be difficult to compute inverse function
-                of e_kpub without a trapdoor information
+            * it provides a trapdoor (shortcut) for computing the inverse function of e_kpub
+                * it must be difficult to compute inverse function of e_kpub without a trapdoor
+                information
     * encryption is a permutation of b-bit strings
         * {0, 1}^b -> {0, 1}^b
         * each key "chooses" some permutation
@@ -87,8 +85,7 @@
 ## trapdoor function
 * is a function that
     * is easy to compute in one direction
-    * believed to be difficult to find its inverse
-        * without special information, called the "trapdoor
+    * believed to be difficult to find its inverse (without special information, called the "trapdoor")
 * analogy: padlock and its key
     * it is trivial to change the padlock from open to closed without using the key
     * opening the padlock easily requires the key to be used
@@ -126,16 +123,15 @@
 ## rsa
 * asymmetric encryption algorithm
 * named after its inventors: Ron Rivest, Adi Shamir, and Leonard Adleman
-* rsa = good trapdoor function explained above
-    * setup of RSA is choosing two large prime numbers
-* encryption is faster if e is a small and decryption is faster if d is small
+* rsa = good trapdoor function explained above (product of two large prime numbers)
+* encryption is faster if e is small and decryption is faster if d is small
     * most common e is 65537
 * we are encrypting / decrypting numbers - not letters
     * example
         * encrypting: "hello"
         * observation: all of the information is already stored in binary
             * encoding standards like ASCII or Unicode are used for humans to understand
-        * this means that "hello" already exist as numbers
+        * this means that "hello" already exist as number
 * RSA relies on the size of its key to be difficult to break
     * longer RSA key => more secure it is
 * prime generating problem
@@ -174,8 +170,8 @@
                     * Theorem 12.8
                     * https://math.mit.edu/classes/18.783/2017/LectureNotes12.pdf
             * prime number density
-                * π(n) is the number of prime numbers ≤ n
-                * prime number theorem states that n / ln(n) is a good approximation of π(n)
+                * φ(n) is the number of prime numbers ≤ n
+                * prime number theorem states that n / ln(n) is a good approximation of φ(n)
                 * it means the probability that a randomly chosen number is prime is 1 / ln(n)
                     * there are n positive integers ≤ n
                     * approximately n / ln(n) primes
@@ -188,6 +184,7 @@
 * structure of a message can give attackers clues about its content
 * padding: adding randomized data to hide the original formatting
     * using the word padding for RSA is by now rather incorrect
+        * RSA without padding is also called Textbook RSA
     * old padding schemes for RSA did simply extend the message before converting a number
     * newer schemes actually alter the message itself as well
         * example: OAEP
@@ -202,7 +199,6 @@
             * isolating the changes to get valid padding
         * that one error message is all you need to eventually decrypt a chosen ciphertext
             * it makes developing secure libraries almost impossible
-* RSA without padding is also called Textbook RSA
 * padding oracle attack
     * https://robertheaton.com/2013/07/29/padding-oracle-attack/
     * https://research.nccgroup.com/2021/02/17/cryptopals-exploiting-cbc-padding-oracles/
@@ -231,8 +227,6 @@
 * summary
     ![alt text](img/ecb_vs_cbc.png)
 
-
-
 ## vulnerabilities
 * TLS 1.3 no longer supports RSA
 * criticism: https://www.youtube.com/watch?v=lElHzac8DDI
@@ -243,30 +237,22 @@
     * if p or q ever gets reused in another RSA moduli => can be easily factored using the GCD algorithm
 * RSA primitive is based on modular exponentiation
     * this operation is homomorphic
-    * c1=md1, c2=md2 => (m1.m2)d=c1.c2=c
-    * it is the essential to break this "homomorphism"
+    * c1=md1, c2=md2 => (m1*m2)^d=c1*c2=c
+    * to fix it - it is the essential to break this "homomorphism"
         * padding
+    * example: RsaExploitsTest "sign then verify - product attack"
 * small exponent
     * for example: 3 // most common exponent is 65537
     * suppose you’re using a 2048-bit modulus N and exchanging a 256-bit key
         * message m is simply the key without padding => m³ < N => take the cube root
+    * example: RsaExploitsTest "encode / decode - e < n"
 
 ## digital signature
 * solves a problem analogous to the purpose of a pen-and-ink signature on a physical document
-* public key (asymmetric) cryptosystems vs digital signatures
-    * consider an analogy bank deposit vaults vs signet rings
-    * bank deposit vault has a narrow slot (the “public encryption key”) into which anyone can deposit an envelope
-        * only the owner of the vault’s locker combination (the “private decryption key”) is
-        able to open the vault and read the message
-        * public key cryptosystem is a digital version of a bank deposit vault
-    * signet ring (the “private signing key”) is a ring that has a recessed image
-        * owner drips some wax from a candle onto his document and presses the ring into the wax to make an
-        impression (the “public signature”)
-        * anyone who looks at the document can verify that the wax impression was made by the owner of the signet ring
-            * only the owner of the ring is able to create valid impression
+* assymetric cryptography vs digital signatures
+    * consider an analogy: bank deposit vaults vs signet rings
         * in today’s world signet rings and wax images obviously would not provide much security
 * digital signatures are at least as important as public key cryptosystems
-    * one might argue that they are of greater importance
 * significant use-case
     * your computer receives program and system upgrades over the Internet
     * how can your computer tell that an upgrade comes from a legitimate source?
