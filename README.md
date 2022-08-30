@@ -199,11 +199,12 @@
             * isolating the changes to get valid padding
         * that one error message is all you need to eventually decrypt a chosen ciphertext
             * it makes developing secure libraries almost impossible
-* padding oracle attack
-    * https://robertheaton.com/2013/07/29/padding-oracle-attack/
-    * https://research.nccgroup.com/2021/02/17/cryptopals-exploiting-cbc-padding-oracles/
-    * https://flast101.github.io/padding-oracle-attack-explained/
-    * https://jiang-zhenghong.github.io/blogs/PaddingOracle.html
+            * padding oracle attack
+                * will be described in other workshops
+                * https://robertheaton.com/2013/07/29/padding-oracle-attack/
+                * https://research.nccgroup.com/2021/02/17/cryptopals-exploiting-cbc-padding-oracles/
+                * https://flast101.github.io/padding-oracle-attack-explained/
+                * https://jiang-zhenghong.github.io/blogs/PaddingOracle.html
 
 ## block ciphers
 * if block ciphers act on short blocks, how do we encrypt a long message?
