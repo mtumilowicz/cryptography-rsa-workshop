@@ -24,6 +24,8 @@
     * [Encrypting with Block Ciphers](https://www.youtube.com/watch?v=oVCCXZfpu-w)
     * https://www.techtarget.com/searchsecurity/definition/cipher-block-chaining
     * https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation
+    * [Devoxx Greece 2024 - Asymmetric Cryptography: A Deep Dive by Eli Holderness](https://www.youtube.com/watch?v=Q20H-H91-Vk)
+    * https://chatgpt.com/
 
 ## disclaimer
 * only for workshop purposes
@@ -182,6 +184,14 @@
                 * probability to find a prime number of 1024 bits: (ln(2¹⁰²⁴)) = (1 / 710)
                     * primes are odd (except 2), we can increase this probability by 2
                     * to generate a 1024 bits prime number, we have to test 355 numbers randomly generated
+* elliptic curves cryptography pros over rsa
+   * smaller key sizes and signatures
+      * example
+         * 256-bit ECC key ~ 3072-bit RSA key
+         * 384-bit ECC key ~ 7680-bit RSA key
+      * lower storage requirements for both private keys and public keys
+   * less computational power for key generation, encryption, and decryption
+      * valuable for low-power devices such as IoT devices and mobile phones
 
 ## padding
 * structure of a message can give attackers clues about its content
@@ -229,6 +239,7 @@
         * pros
             * decryption of a block of ciphertext to depend on all the preceding ciphertext blocks
 * summary
+  
     ![alt text](img/ecb_vs_cbc.png)
 
 ## vulnerabilities
